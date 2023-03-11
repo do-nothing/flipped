@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  ethServer:
+    build:
+      context: ../
+      dockerfile: Dockerfile_eth
+    image: $env_image
+    container_name: ethServer
+    restart: always
+    environment:
+      - wss=$env_wss
+      - contract=$env_contract
+      - mqServer=$env_mqServer
+      - chainId=$env_chainId
+networks:
+  default:
+    name: flipped_default
+
+

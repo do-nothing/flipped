@@ -16,8 +16,10 @@ module.exports = (options) => {
     proof.grantee = publicKey
     proof.encryptInfo = aes.encrypt(privateKey, publicKey, aesKey)
     let originName = resource.path || resource.Name
-    if (originName && originName.lastIndexOf(".encrypted") > 0)
+    if (originName && originName.lastIndexOf(".encrypted") > 0) {
       resource.Name = originName.substring(0, originName.lastIndexOf(".encrypted"))
+    }
+    resource.Tsize = resource.size || resource.Size
     proof.addLink(resource)
     options.proofName = resource.Name || resource.path
     Object.assign(options, { format: 'dag-cbor', hashAlg: 'sha2-256', pin: true })
@@ -25,8 +27,8 @@ module.exports = (options) => {
     return rst
   }
 
-  const getProof = async function (cid, privateKey) {
-    const data = await client.dag.get(cid)
+  const getProof = async function (cid, privateKey, options = {}) {
+    const data = await client.dag.get(cid, options)
     const publicKey = data.value.grantor
     const aesKey = aes.decrypt(privateKey, publicKey, data.value.encryptInfo)
     delete data.value.encryptInfo
